@@ -14,6 +14,7 @@
 		BA643E341A88D8660073C038 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BA643E331A88D8660073C038 /* Images.xcassets */; };
 		BA643E371A88D8660073C038 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = BA643E351A88D8660073C038 /* LaunchScreen.xib */; };
 		BA643E431A88D8660073C038 /* AGURLSessionExamplesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BA643E421A88D8660073C038 /* AGURLSessionExamplesTests.m */; };
+		BA643E521A88D96C0073C038 /* AGURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = BA643E4E1A88D96C0073C038 /* AGURLSession.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,9 @@
 		BA643E3C1A88D8660073C038 /* AGURLSessionExamplesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AGURLSessionExamplesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA643E411A88D8660073C038 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BA643E421A88D8660073C038 /* AGURLSessionExamplesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AGURLSessionExamplesTests.m; sourceTree = "<group>"; };
+		BA643E4D1A88D96C0073C038 /* AGURLSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGURLSession.h; sourceTree = "<group>"; };
+		BA643E4E1A88D96C0073C038 /* AGURLSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AGURLSession.m; sourceTree = "<group>"; };
+		BA643E511A88D96C0073C038 /* VBDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VBDefines.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,7 @@
 		BA643E1A1A88D8650073C038 = {
 			isa = PBXGroup;
 			children = (
+				BA643E4C1A88D9320073C038 /* AGURLSession */,
 				BA643E251A88D8660073C038 /* AGURLSessionExamples */,
 				BA643E3F1A88D8660073C038 /* AGURLSessionExamplesTests */,
 				BA643E241A88D8660073C038 /* Products */,
@@ -117,6 +122,32 @@
 				BA643E411A88D8660073C038 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BA643E4C1A88D9320073C038 /* AGURLSession */ = {
+			isa = PBXGroup;
+			children = (
+				BA643E4D1A88D96C0073C038 /* AGURLSession.h */,
+				BA643E4E1A88D96C0073C038 /* AGURLSession.m */,
+				BA643E4F1A88D96C0073C038 /* frameworks */,
+			);
+			path = AGURLSession;
+			sourceTree = "<group>";
+		};
+		BA643E4F1A88D96C0073C038 /* frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BA643E501A88D96C0073C038 /* VBDefines */,
+			);
+			path = frameworks;
+			sourceTree = "<group>";
+		};
+		BA643E501A88D96C0073C038 /* VBDefines */ = {
+			isa = PBXGroup;
+			children = (
+				BA643E511A88D96C0073C038 /* VBDefines.h */,
+			);
+			path = VBDefines;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -219,6 +250,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA643E521A88D96C0073C038 /* AGURLSession.m in Sources */,
 				BA643E2F1A88D8660073C038 /* ViewController.m in Sources */,
 				BA643E2C1A88D8660073C038 /* AppDelegate.m in Sources */,
 				BA643E291A88D8660073C038 /* main.m in Sources */,
@@ -414,6 +446,7 @@
 				BA643E481A88D8660073C038 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BA643E491A88D8660073C038 /* Build configuration list for PBXNativeTarget "AGURLSessionExamplesTests" */ = {
 			isa = XCConfigurationList;
@@ -422,6 +455,7 @@
 				BA643E4B1A88D8660073C038 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
