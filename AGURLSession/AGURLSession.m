@@ -65,48 +65,132 @@
     return self.session.configuration;
 }
 
-#pragma mark - perform data task
-- (void) performTaskWithURLString:(NSString*)urlString
-                       completion:(AGURLSessionCompletion)completion {
-    [self performTaskWithURL:[NSURL URLWithString:urlString]
-                  completion:completion];
+#pragma mark - json task
+- (void) loadJSONWithURLString:(NSString*)urlString
+                    completion:(AGURLSessionJSONCompletion)completion  {
+    [self loadTask:[self jsonTaskWithURLString:urlString
+                                    completion:completion]];
 }
-- (void) performTaskWithURL:(NSURL*)url
-                 completion:(AGURLSessionCompletion)completion {
+
+- (void) loadJSONWithURL:(NSURL*)url
+              completion:(AGURLSessionJSONCompletion)completion {
+    [self loadTask:[self jsonTaskWithURL:url
+                              completion:completion]];
+}
+
+- (void) loadJSONWithURLRequest:(NSURLRequest*)request
+                                  completion:(AGURLSessionJSONCompletion)completion {
+    [self loadTask:[self jsonTaskWithURLRequest:request
+                                     completion:completion]];
+}
+
+- (NSURLSessionTask*) jsonTaskWithURLString:(NSString*)urlString
+                                 completion:(AGURLSessionJSONCompletion)completion  {
+    
+    return [self jsonTaskWithURL:[NSURL URLWithString:urlString]
+                      completion:completion];
+}
+
+- (NSURLSessionTask*) jsonTaskWithURL:(NSURL*)url
+                           completion:(AGURLSessionJSONCompletion)completion {
+    
     NSURLRequest* request = [NSURLRequest requestWithURL:url];
-    [self performTaskWithURLRequest:request
-                         completion:completion];
+    return [self jsonTaskWithURLRequest:request
+                             completion:completion];
 }
-- (void) performTaskWithURLRequest:(NSURLRequest*)request
-                        completion:(AGURLSessionCompletion)completion {
+
+- (NSURLSessionTask*) jsonTaskWithURLRequest:(NSURLRequest*)request
+                     completion:(AGURLSessionJSONCompletion)completion {
+    __weak typeof(self) __self = self;
+    return [self dataTaskWithURLRequest:request
+                             completion:^(NSData *data, NSError *error) {
+                                 dispatch_async(__self.queueCompletion, ^{
+                                     id json = nil;
+                                     NSError* jsonError = nil;
+                                     if (error == nil) {
+                                         json = [NSJSONSerialization JSONObjectWithData:data
+                                                                                options:NSJSONReadingAllowFragments|NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
+                                                                                  error:&jsonError];
+                                         if (jsonError == nil && json && [json isKindOfClass:[NSArray class]] == NO) {
+                                             json = [NSArray arrayWithObject:json];
+                                         }
+                                     }
+                                     if (!error && !jsonError) {
+                                         AGSessionLog(@"(http:%@) success \nurl:%@ \njson:%@", @(httpCode), response.URL.absoluteString, json);
+                                     }
+                                     dispatch_async(dispatch_get_main_queue(), ^{
+                                         if (completion) {
+                                             completion(json, error, jsonError);
+                                         }
+                                     });
+                                 });
+                             }];
+}
+
+#pragma mark - data task
+- (void) loadDataWithURLString:(NSString*)urlString
+                    completion:(AGURLSessionDataCompletion)completion {
+    
+    [self loadTask:[self dataTaskWithURLString:urlString
+                                    completion:completion]];
+}
+- (void) loadDataWithURL:(NSURL*)url
+              completion:(AGURLSessionDataCompletion)completion {
+    [self loadTask:[self dataTaskWithURL:url
+                              completion:completion]];
+}
+- (void) loadDataWithURLRequest:(NSURLRequest*)request
+                     completion:(AGURLSessionDataCompletion)completion {
+    [self loadTask:[self dataTaskWithURLRequest:request
+                                     completion:completion]];
+}
+
+
+- (NSURLSessionTask*) dataTaskWithURLString:(NSString*)urlString
+                                 completion:(AGURLSessionDataCompletion)completion {
+    
+    return [self dataTaskWithURL:[NSURL URLWithString:urlString]
+                      completion:completion];
+}
+
+- (NSURLSessionTask*) dataTaskWithURL:(NSURL*)url
+                           completion:(AGURLSessionDataCompletion)completion {
+    
+    NSURLRequest* request = [NSURLRequest requestWithURL:url];
+    return [self dataTaskWithURLRequest:request
+                             completion:completion];
+}
+
+- (NSURLSessionTask*) dataTaskWithURLRequest:(NSURLRequest*)request
+                                  completion:(AGURLSessionDataCompletion)completion {
+    
     __weak typeof(self) __self = self;
     NSURLSessionDataTask* task = [self.session dataTaskWithRequest:request
                                                  completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                      dispatch_async(__self.queueCompletion, ^{
-                                                         id json = nil;
-                                                         NSError* jsonError = nil;
-                                                         if (error == nil) {
-                                                             json = [NSJSONSerialization JSONObjectWithData:data
-                                                                                                    options:NSJSONReadingAllowFragments|NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves
-                                                                                                      error:&jsonError];
-                                                             if (jsonError == nil && json && [json isKindOfClass:[NSArray class]] == NO) {
-                                                                 json = [NSArray arrayWithObject:json];
-                                                             }
-                                                         }
                                                          NSInteger httpCode = ((NSHTTPURLResponse*)response).statusCode;
-                                                         if (error || jsonError) {
-                                                             AGSessionLog(@"(http:%@) task finished \nurl:%@ \nerror:%@", @(httpCode), response.URL.absoluteString, error ? error : jsonError);
+                                                         if (error) {
+                                                             AGSessionLog(@"(http:%@) failure\nurl:%@ \nnetworkError:%@", @(httpCode), response.URL.absoluteString,  error);
                                                          }else{
-                                                             AGSessionLog(@"(http:%@) task finished \nurl:%@ \njson:%@", @(httpCode), response.URL.absoluteString, json);
+                                                             AGSessionLog(@"(http:%@) success\nurl:%@", @(httpCode), response.URL.absoluteString);
                                                          }
                                                          dispatch_async(dispatch_get_main_queue(), ^{
                                                              if (completion) {
-                                                                 completion(json, error ? error : jsonError);
+                                                                 completion(data, error);
                                                              }
                                                          });
                                                      });
                                                  }];
+    return task;
+}
+
+#pragma mark - task
+- (void) loadTask:(NSURLSessionTask*)task {
     [task resume];
+}
+
+- (void) cancelTask:(NSURLSessionTask*)task {
+    [task cancel];
 }
 
 #pragma mark - url builder

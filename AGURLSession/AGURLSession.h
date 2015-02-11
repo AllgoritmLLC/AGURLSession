@@ -24,7 +24,8 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void (^AGURLSessionCompletion)(NSArray* jsonResponse, NSError* error);
+typedef void (^AGURLSessionJSONCompletion)(NSArray* jsonResponse, NSError* networkError, NSError* jsonError);
+typedef void (^AGURLSessionDataCompletion)(NSData* data, NSError* networkError);
 
 typedef enum{
     AGURLSchemaHttp = 0,
@@ -35,13 +36,40 @@ typedef enum{
 
 @property (nonatomic, weak, readonly) NSURLSessionConfiguration* sessionConfiguration;
 
-#pragma mark - perform data task
-- (void) performTaskWithURLString:(NSString*)urlString
-                       completion:(AGURLSessionCompletion)completion;
-- (void) performTaskWithURL:(NSURL*)url
-                 completion:(AGURLSessionCompletion)completion;
-- (void) performTaskWithURLRequest:(NSURLRequest*)request
-                        completion:(AGURLSessionCompletion)completion;
+#pragma mark - json task
+- (void) loadJSONWithURLString:(NSString*)urlString
+                    completion:(AGURLSessionJSONCompletion)completion;
+- (void) loadJSONWithURL:(NSURL*)url
+              completion:(AGURLSessionJSONCompletion)completion;
+- (void) loadJSONWithURLRequest:(NSURLRequest*)request
+                     completion:(AGURLSessionJSONCompletion)completion;
+
+- (NSURLSessionTask*) jsonTaskWithURLString:(NSString*)urlString
+                                 completion:(AGURLSessionJSONCompletion)completion;
+- (NSURLSessionTask*) jsonTaskWithURL:(NSURL*)url
+                           completion:(AGURLSessionJSONCompletion)completion;
+- (NSURLSessionTask*) jsonTaskWithURLRequest:(NSURLRequest*)request
+                                  completion:(AGURLSessionJSONCompletion)completion;
+
+#pragma mark - data task
+- (void) loadDataWithURLString:(NSString*)urlString
+                    completion:(AGURLSessionDataCompletion)completion;
+- (void) loadDataWithURL:(NSURL*)url
+              completion:(AGURLSessionDataCompletion)completion;
+- (void) loadDataWithURLRequest:(NSURLRequest*)request
+                     completion:(AGURLSessionDataCompletion)completion;
+
+
+- (NSURLSessionTask*) dataTaskWithURLString:(NSString*)urlString
+                                 completion:(AGURLSessionDataCompletion)completion;
+- (NSURLSessionTask*) dataTaskWithURL:(NSURL*)url
+                           completion:(AGURLSessionDataCompletion)completion;
+- (NSURLSessionTask*) dataTaskWithURLRequest:(NSURLRequest*)request
+                                  completion:(AGURLSessionDataCompletion)completion;
+
+#pragma mark - task
+- (void) loadTask:(NSURLSessionTask*)task;
+- (void) cancelTask:(NSURLSessionTask*)task;
 
 #pragma mark - url builder
 - (NSString*) urlStringWithSchema:(AGURLSchema)schema
