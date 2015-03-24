@@ -201,7 +201,7 @@
     
     NSString* urlPath = [NSString stringWithFormat:@"%@://%@", [self schemaSrtingWithSchema:schema], serverPath];
     if (additionalPath.length) {
-        urlPath = [urlPath stringByAppendingPathComponent:additionalPath];
+        urlPath = [urlPath stringByAppendingFormat:@"/%@", additionalPath];
     }
     if (params.allKeys.count) {
         urlPath = [urlPath stringByAppendingFormat:@"?%@", [self paramsStringFromDictionary:params]];
