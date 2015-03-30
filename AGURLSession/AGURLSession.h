@@ -43,6 +43,15 @@ typedef enum{
               completion:(AGURLSessionJSONCompletion)completion;
 - (void) loadJSONWithURLRequest:(NSURLRequest*)request
                      completion:(AGURLSessionJSONCompletion)completion;
+- (void) loadJSONWithURL:(NSURL *)url
+                  method:(NSString *)method
+              bodyFields:(NSDictionary *)bodyFields
+              completion:(AGURLSessionJSONCompletion)completion;
+
+- (void) loadJSONWithURLString:(NSString *)urlString
+                        method:(NSString *)method
+                    bodyFields:(NSDictionary *)bodyFields
+                    completion:(AGURLSessionJSONCompletion)completion;
 
 - (NSURLSessionTask*) jsonTaskWithURLString:(NSString*)urlString
                                  completion:(AGURLSessionJSONCompletion)completion;
@@ -51,6 +60,12 @@ typedef enum{
 - (NSURLSessionTask*) jsonTaskWithURLRequest:(NSURLRequest*)request
                                   completion:(AGURLSessionJSONCompletion)completion;
 
+- (NSURLSessionTask*)jsonTaskWithURLString:(NSString *)urlString
+                                    method:(NSString *)method
+                                bodyFields:(NSDictionary *)body
+                                completion:(AGURLSessionJSONCompletion)completion;
+
+
 #pragma mark - data task
 - (void) loadDataWithURLString:(NSString*)urlString
                     completion:(AGURLSessionDataCompletion)completion;
@@ -58,7 +73,6 @@ typedef enum{
               completion:(AGURLSessionDataCompletion)completion;
 - (void) loadDataWithURLRequest:(NSURLRequest*)request
                      completion:(AGURLSessionDataCompletion)completion;
-
 
 - (NSURLSessionTask*) dataTaskWithURLString:(NSString*)urlString
                                  completion:(AGURLSessionDataCompletion)completion;

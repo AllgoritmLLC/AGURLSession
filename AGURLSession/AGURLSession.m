@@ -78,6 +78,52 @@
                               completion:completion]];
 }
 
+- (void) loadJSONWithURLString:(NSString *)urlString
+                        method:(NSString *)method
+                    bodyFields:(NSDictionary *)bodyFields
+                    completion:(AGURLSessionJSONCompletion)completion  {
+    [self loadTask:[self jsonTaskWithURLString:urlString
+                                        method:method
+                                  headerFields:nil
+                                    bodyFields:bodyFields
+                                    completion:completion]];
+}
+
+- (void) loadJSONWithURL:(NSURL *)url
+                  method:(NSString *)method
+              bodyFields:(NSDictionary *)bodyFields
+              completion:(AGURLSessionJSONCompletion)completion {
+    [self loadTask:[self jsonTaskWithURL:url
+                                  method:method
+                            headerFields:nil
+                              bodyFields:bodyFields
+                              completion:completion]];
+}
+
+- (void) loadJSONWithURLString:(NSString *)urlString
+                        method:(NSString *)method
+                  headerFields:(NSDictionary *)headerFields
+                    bodyFields:(NSDictionary *)bodyFields
+                    completion:(AGURLSessionJSONCompletion)completion  {
+    [self loadTask:[self jsonTaskWithURLString:urlString
+                                        method:method
+                                  headerFields:headerFields
+                                    bodyFields:bodyFields
+                                    completion:completion]];
+}
+
+- (void) loadJSONWithURL:(NSURL *)url
+                  method:(NSString *)method
+            headerFields:(NSDictionary *)headerFields
+              bodyFields:(NSDictionary *)bodyFields
+              completion:(AGURLSessionJSONCompletion)completion {
+    [self loadTask:[self jsonTaskWithURL:url
+                                  method:method
+                            headerFields:headerFields
+                              bodyFields:bodyFields
+                              completion:completion]];
+}
+
 - (void) loadJSONWithURLRequest:(NSURLRequest*)request
                                   completion:(AGURLSessionJSONCompletion)completion {
     [self loadTask:[self jsonTaskWithURLRequest:request
@@ -86,7 +132,6 @@
 
 - (NSURLSessionTask*) jsonTaskWithURLString:(NSString*)urlString
                                  completion:(AGURLSessionJSONCompletion)completion  {
-    
     return [self jsonTaskWithURL:[NSURL URLWithString:urlString]
                       completion:completion];
 }
@@ -99,7 +144,40 @@
                              completion:completion];
 }
 
-- (NSURLSessionTask*) jsonTaskWithURLRequest:(NSURLRequest*)request
+- (NSURLSessionTask*)jsonTaskWithURLString:(NSString *)urlString
+                                    method:(NSString *)method
+                              headerFields:(NSDictionary *)headerFields
+                                bodyFields:(NSDictionary *)bodyFields
+                                completion:(AGURLSessionJSONCompletion)completion  {
+    return [self jsonTaskWithURL:[NSURL URLWithString:urlString]
+                          method:method
+                    headerFields:headerFields
+                      bodyFields:bodyFields
+                      completion:completion];
+}
+
+- (NSURLSessionTask*)jsonTaskWithURL:(NSURL *)url
+                              method:(NSString *)method
+                        headerFields:(NSDictionary *)headerFields
+                          bodyFields:(NSDictionary *)bodyFields
+                          completion:(AGURLSessionJSONCompletion)completion {
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:url];
+    if (method) {
+        request.HTTPMethod = method;
+    }
+    if (bodyFields) {
+        NSString *bodyString =  [self paramsStringFromDictionary:bodyFields];
+        NSData *bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding];
+        request.HTTPBody = bodyData;
+    }
+    if(headerFields) {
+        request.allHTTPHeaderFields = headerFields;
+    }
+    return [self jsonTaskWithURLRequest:request
+                             completion:completion];
+}
+
+- (NSURLSessionTask*)jsonTaskWithURLRequest:(NSURLRequest*)request
                      completion:(AGURLSessionJSONCompletion)completion {
     __weak typeof(self) __self = self;
     return [self dataTaskWithURLRequest:request
@@ -201,7 +279,7 @@
     
     NSString* urlPath = [NSString stringWithFormat:@"%@://%@", [self schemaSrtingWithSchema:schema], serverPath];
     if (additionalPath.length) {
-        urlPath = [urlPath stringByAppendingFormat:@"/%@", additionalPath];
+        urlPath = [urlPath stringByAppendingPathComponent:additionalPath];
     }
     if (params.allKeys.count) {
         urlPath = [urlPath stringByAppendingFormat:@"?%@", [self paramsStringFromDictionary:params]];
